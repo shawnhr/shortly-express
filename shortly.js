@@ -2,6 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
+var bcrypt = require('bcrypt-nodejs');
 
 
 var db = require('./app/config');
@@ -66,13 +67,14 @@ function(req, res) {
           baseUrl: req.headers.origin
         })
         .then(function(newLink) {
-          //console.log("newLink..........========...........>>>>>>", newLink);
+          // console.log('this is the newLink: ', newLink)
           res.status(200).send(newLink);
         });
       });
     }
   });
 });
+
 
 /************************************************************/
 // Write your authentication routes here
@@ -90,6 +92,53 @@ function(req, res) {
 });
 
 
+// get sign up page form
+app.get('/signup', 
+function(req, res) {
+  res.render('signup');
+});
+
+// post sign up submit 
+
+app.post('/signup', 
+function(req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  
+  console.log('POST: this is username: ', username);
+  console.log('POST: this is password: ', password);
+  
+
+  new User({ username: username }).fetch().then(function(found) {
+    if (found) {
+      console.log('Username already exists. Redirecting to login page..')
+      res.redirect('login');
+      
+    } else {
+      // get salt and hashed password (salt + original password)
+      // create user object with user, salt and hashed pw
+      
+      
+      
+      util.getUrlTitle(uri, function(err, title) {
+        if (err) {
+          console.log('Error reading URL heading: ', err);
+          return res.sendStatus(404);
+        }
+
+        Users.create({
+          username: username,
+          password: 'salt + password thru hash TODO',
+          salt: 'salt_TODO'
+        })
+        .then(function(newLink) {
+          // console.log('this is the newLink: ', newLink)
+          res.status(200).send(newLink);
+        });
+      });
+    }
+  });
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
