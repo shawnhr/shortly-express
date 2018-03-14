@@ -115,25 +115,30 @@ function(req, res) {
       res.redirect('login');
       
     } else {
-      // get salt and hashed password (salt + original password)
-      // create user object with user, salt and hashed pw
+      // // get salt and hashed password (salt + original password)
+      // // create user object with user, salt and hashed pw
+      // var hashedPassword = 'getHashedPassword_TODO';
+      // var salt = 'getSalt_TODO'
       
       
-      
-      util.getUrlTitle(uri, function(err, title) {
+      util.getNewUserHashedPasswordAndSalt(username, password, function(err, hashedPassword, salt) {
         if (err) {
-          console.log('Error reading URL heading: ', err);
+          console.log('Error reading user password: ', err);
           return res.sendStatus(404);
         }
 
         Users.create({
           username: username,
-          password: 'salt + password thru hash TODO',
-          salt: 'salt_TODO'
+          password: hashedPassword,
+          salt: salt
         })
-        .then(function(newLink) {
+        .then(function(newUser) {
           // console.log('this is the newLink: ', newLink)
-          res.status(200).send(newLink);
+          // TODO - after user signup, 
+          //   create a session for the user
+          //     add a token (cookie) to their session
+          //   direct user to index page ???
+          res.status(200).send('newUser created ......' + JSON.stringify(newUser));
         });
       });
     }
